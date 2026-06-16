@@ -2,13 +2,13 @@
   "name": "X-Calc",
   "short_name": "X-Calc",
   "description": "Profesionalni kalkulator sa standardnim i naučnim modom.",
-  "start_url": "/",
+  "start_url": "/X-Calc/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0E0E12",
   "theme_color": "#F0B429",
   "lang": "bs",
-  "scope": "/",
+  "scope": "/X-Calc/",
   "icons": [
     {
       "src": "icons/icon-72.png",
