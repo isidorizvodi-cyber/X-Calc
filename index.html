@@ -54,6 +54,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 18px 20px 10px;
+      gap: 8px;
     }
 
     .logo {
@@ -61,9 +62,16 @@
       font-weight: 700;
       letter-spacing: -0.5px;
       line-height: 1;
+      flex-shrink: 0;
     }
     .logo .x { color: var(--gold); }
     .logo .rest { color: #fff; }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
     /* Mode toggle */
     .mode-toggle {
@@ -74,10 +82,10 @@
       gap: 2px;
     }
     .mode-btn {
-      padding: 5px 14px;
+      padding: 5px 12px;
       border: none;
       border-radius: 50px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       font-family: 'Inter', sans-serif;
       cursor: pointer;
@@ -85,11 +93,67 @@
       background: transparent;
       color: var(--text-dim);
       letter-spacing: 0.3px;
+      white-space: nowrap;
     }
     .mode-btn.active {
       background: var(--gold);
       color: #0E0E12;
     }
+
+    /* ── LANGUAGE SELECTOR ── */
+    .lang-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .lang-btn {
+      background: var(--surface2);
+      border: 1px solid rgba(240,180,41,0.3);
+      border-radius: 8px;
+      color: var(--gold);
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 5px 9px;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .lang-btn:hover { background: var(--surface3); border-color: rgba(240,180,41,0.6); }
+
+    .lang-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: var(--surface2);
+      border: 1px solid rgba(240,180,41,0.35);
+      border-radius: 12px;
+      overflow: hidden;
+      z-index: 100;
+      min-width: 130px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .lang-dropdown.open { display: block; }
+
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-dim);
+      transition: all 0.12s;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      font-family: 'Inter', sans-serif;
+    }
+    .lang-option:hover { background: var(--surface3); color: var(--text); }
+    .lang-option.selected { color: var(--gold); }
+    .lang-option .flag { font-size: 16px; }
 
     /* ── CALCULATOR WRAPPER ── */
     .calc-wrapper {
@@ -159,9 +223,7 @@
       display: grid;
       gap: 10px;
     }
-
     .btn-grid.standard { grid-template-columns: repeat(4, 1fr); }
-    .btn-grid.scientific { grid-template-columns: repeat(4, 1fr); }
 
     .btn {
       border: none;
@@ -180,10 +242,8 @@
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
-
     .btn:active { transform: scale(0.92); }
 
-    /* Number buttons */
     .btn-num {
       background: var(--btn-num);
       color: var(--text);
@@ -191,7 +251,6 @@
     }
     .btn-num:hover { background: #252530; border-color: rgba(240,180,41,0.45); }
 
-    /* Operator buttons */
     .btn-op {
       background: var(--btn-op);
       color: var(--gold);
@@ -200,7 +259,6 @@
     }
     .btn-op:hover { background: #30303E; border-color: rgba(240,180,41,0.75); }
 
-    /* Special (AC, +/-, %) */
     .btn-special {
       background: var(--btn-special);
       color: var(--text-dim);
@@ -209,7 +267,6 @@
     }
     .btn-special:hover { background: #2C2C3A; border-color: rgba(240,180,41,0.45); }
 
-    /* Equals — gold */
     .btn-eq {
       background: var(--gold);
       color: #0E0E12;
@@ -221,7 +278,6 @@
     .btn-eq:hover { background: #F5BF3A; box-shadow: 0 4px 28px rgba(240,180,41,0.45); }
     .btn-eq:active { transform: scale(0.92); }
 
-    /* Wide button (0 spans 2 cols) */
     .btn-wide {
       aspect-ratio: unset;
       padding: 0 28px;
@@ -229,7 +285,6 @@
       grid-column: span 2;
     }
 
-    /* Scientific small text */
     .btn-sci {
       background: var(--surface3);
       color: rgba(255,255,255,0.7);
@@ -240,9 +295,7 @@
     .btn-sci:hover { background: #2E2E3A; border-color: rgba(240,180,41,0.5); }
 
     /* Scientific panel */
-    .sci-panel {
-      display: none;
-    }
+    .sci-panel { display: none; }
     .sci-panel.visible {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -281,7 +334,6 @@
       margin-left: 4px;
     }
 
-    /* Divider */
     .divider {
       height: 1px;
       background: rgba(255,255,255,0.06);
@@ -293,26 +345,30 @@
 
 <div class="header">
   <div class="logo"><span class="x">X-</span><span class="rest">Calc</span></div>
-  <div class="mode-toggle">
-    <button class="mode-btn active" id="btnStd" onclick="setMode('standard')">Standard</button>
-    <button class="mode-btn" id="btnSci" onclick="setMode('scientific')">Naučni</button>
+  <div class="header-right">
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btnStd" onclick="setMode('standard')" data-i18n="std">Std</button>
+      <button class="mode-btn" id="btnSci" onclick="setMode('scientific')" data-i18n="sci">Sci</button>
+    </div>
+    <div class="lang-wrap">
+      <button class="lang-btn" id="langBtn" onclick="toggleLangMenu()">BS ▾</button>
+      <div class="lang-dropdown" id="langDropdown"></div>
+    </div>
   </div>
 </div>
 
 <div class="calc-wrapper">
 
-  <!-- Display -->
   <div class="display">
     <div class="display-history" id="history"></div>
     <div class="display-main" id="mainDisplay">0</div>
   </div>
 
-  <!-- Scientific panel (hidden by default) -->
   <div class="sci-panel" id="sciPanel">
     <div class="angle-row" style="grid-column:span 4; display:flex;">
       <button class="angle-btn active" id="btnDeg" onclick="setAngle('deg')">DEG</button>
       <button class="angle-btn" id="btnRad" onclick="setAngle('rad')">RAD</button>
-      <span class="angle-label">Jedinica kuta</span>
+      <span class="angle-label" id="lblAngle">Jedinica kuta</span>
     </div>
     <button class="btn btn-sci" onclick="sciFunc('sin')">sin</button>
     <button class="btn btn-sci" onclick="sciFunc('cos')">cos</button>
@@ -328,29 +384,27 @@
     <button class="btn btn-sci" onclick="sciFunc('fact')">n!</button>
   </div>
 
-  <!-- Standard buttons -->
   <div class="btn-grid standard" id="stdGrid">
-    <!-- Row 1 -->
-    <button class="btn btn-special" onclick="calcClear()">AC</button>
+    <button class="btn btn-special" id="btnAC" onclick="calcClear()">AC</button>
     <button class="btn btn-special" onclick="toggleSign()">+/−</button>
     <button class="btn btn-special" onclick="calcPercent()">%</button>
     <button class="btn btn-op" onclick="setOp('÷')">÷</button>
-    <!-- Row 2 -->
+
     <button class="btn btn-num" onclick="appendNum('7')">7</button>
     <button class="btn btn-num" onclick="appendNum('8')">8</button>
     <button class="btn btn-num" onclick="appendNum('9')">9</button>
     <button class="btn btn-op" onclick="setOp('×')">×</button>
-    <!-- Row 3 -->
+
     <button class="btn btn-num" onclick="appendNum('4')">4</button>
     <button class="btn btn-num" onclick="appendNum('5')">5</button>
     <button class="btn btn-num" onclick="appendNum('6')">6</button>
     <button class="btn btn-op" onclick="setOp('−')">−</button>
-    <!-- Row 4 -->
+
     <button class="btn btn-num" onclick="appendNum('1')">1</button>
     <button class="btn btn-num" onclick="appendNum('2')">2</button>
     <button class="btn btn-num" onclick="appendNum('3')">3</button>
     <button class="btn btn-op" onclick="setOp('+')">+</button>
-    <!-- Row 5 -->
+
     <button class="btn btn-num btn-wide" onclick="appendNum('0')">0</button>
     <button class="btn btn-num" onclick="appendDot()">.</button>
     <button class="btn btn-eq" onclick="calcEquals()">=</button>
@@ -359,184 +413,254 @@
 </div>
 
 <script>
-  let display = '0';
-  let history = '';
-  let operator = null;
-  let prevValue = null;
-  let waitingForOperand = false;
-  let angleMode = 'deg'; // deg or rad
-  let sciPending = null; // for xʸ
+// ═══════════════════════════════════════════════
+// i18n — prijevodi
+// ═══════════════════════════════════════════════
+const LANGS = {
+  bhs:{ flag:'🌍', label:'BHS', name:'B/H/S',    std:'Standard', sci:'Naučni',     angle:'Jedinica kuta', error:'Greška' },
+  en: { flag:'🇬🇧', label:'EN',  name:'English',   std:'Standard', sci:'Scientific', angle:'Angle unit',    error:'Error'  },
+  de: { flag:'🇩🇪', label:'DE',  name:'Deutsch',   std:'Standard', sci:'Wiss.',      angle:'Winkeleinheit', error:'Fehler' },
+  fr: { flag:'🇫🇷', label:'FR',  name:'Français',  std:'Standard', sci:'Sci.',       angle:'Unité d\'angle',error:'Erreur' },
+  es: { flag:'🇪🇸', label:'ES',  name:'Español',   std:'Estándar', sci:'Cient.',     angle:'Unidad ángulo', error:'Error'  },
+  it: { flag:'🇮🇹', label:'IT',  name:'Italiano',  std:'Standard', sci:'Scient.',    angle:'Unità angolo',  error:'Errore' },
+  tr: { flag:'🇹🇷', label:'TR',  name:'Türkçe',    std:'Standart', sci:'Bilimsel',   angle:'Açı birimi',    error:'Hata'   },
+  ru: { flag:'🇷🇺', label:'RU',  name:'Русский',   std:'Станд.',   sci:'Науч.',      angle:'Единица угла',  error:'Ошибка' },
+  ar: { flag:'🇸🇦', label:'AR',  name:'العربية',   std:'قياسي',   sci:'علمي',       angle:'وحدة الزاوية',  error:'خطأ'    },
+  zh: { flag:'🇨🇳', label:'ZH',  name:'中文',      std:'标准',     sci:'科学',       angle:'角度单位',      error:'错误'   },
+};
 
-  const mainEl = document.getElementById('mainDisplay');
-  const histEl = document.getElementById('history');
+// Mapiranje navigator.language → naš ključ
+function detectLang() {
+  const saved = localStorage.getItem('xcalc-lang');
+  if (saved && LANGS[saved]) return saved;
+  const nav = (navigator.language || 'en').toLowerCase();
+  if (nav.startsWith('bs') || nav.startsWith('hr') || nav.startsWith('sr')) return 'bhs';
+  if (nav.startsWith('de')) return 'de';
+  if (nav.startsWith('fr')) return 'fr';
+  if (nav.startsWith('es')) return 'es';
+  if (nav.startsWith('it')) return 'it';
+  if (nav.startsWith('tr')) return 'tr';
+  if (nav.startsWith('ru')) return 'ru';
+  if (nav.startsWith('ar')) return 'ar';
+  if (nav.startsWith('zh')) return 'zh';
+  return 'en';
+}
 
-  function updateDisplay() {
-    mainEl.textContent = display;
-    histEl.textContent = history;
-    // Shrink font if needed
-    mainEl.classList.remove('shrink', 'tiny');
-    if (display.length > 12) mainEl.classList.add('tiny');
-    else if (display.length > 8) mainEl.classList.add('shrink');
-  }
+let currentLang = detectLang();
 
-  function appendNum(n) {
-    if (waitingForOperand) {
-      display = n;
-      waitingForOperand = false;
-    } else {
-      display = display === '0' ? n : display + n;
-    }
+function applyLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('xcalc-lang', lang);
+  const t = LANGS[lang];
+  document.documentElement.lang = lang;
+
+  document.getElementById('btnStd').textContent = t.std;
+  document.getElementById('btnSci').textContent = t.sci;
+  document.getElementById('lblAngle').textContent = t.angle;
+  document.getElementById('langBtn').textContent = t.label + ' ▾';
+
+  // RTL za arapski
+  document.body.style.direction = lang === 'ar' ? 'rtl' : 'ltr';
+
+  // Ažuriraj error poruku ako je prikazana
+  if (display === LANGS[currentLang]?.error || Object.values(LANGS).some(l => l.error === display)) {
+    if (display !== '0') display = t.error;
     updateDisplay();
   }
 
-  function appendDot() {
-    if (waitingForOperand) { display = '0.'; waitingForOperand = false; }
-    else if (!display.includes('.')) display += '.';
-    updateDisplay();
-  }
-
-  function calcClear() {
-    display = '0'; history = ''; operator = null;
-    prevValue = null; waitingForOperand = false; sciPending = null;
-    updateDisplay();
-  }
-
-  function toggleSign() {
-    display = display.startsWith('-') ? display.slice(1) : '-' + display;
-    if (display === '-0') display = '0';
-    updateDisplay();
-  }
-
-  function calcPercent() {
-    display = String(parseFloat(display) / 100);
-    updateDisplay();
-  }
-
-  function setOp(op) {
-    if (sciPending === 'pow') {
-      // xʸ — apply now
-      const base = prevValue !== null ? prevValue : parseFloat(display);
-      display = String(Math.pow(base, parseFloat(display)));
-      prevValue = null; sciPending = null;
-      history = '';
-      waitingForOperand = true;
-      updateDisplay();
-      return;
-    }
-    if (operator && !waitingForOperand) calcEquals(true);
-    prevValue = parseFloat(display);
-    operator = op;
-    history = display + ' ' + op;
-    waitingForOperand = true;
-    updateDisplay();
-  }
-
-  function calcEquals(silent = false) {
-    if (operator === null || prevValue === null) return;
-    const current = parseFloat(display);
-    let result;
-    switch (operator) {
-      case '+': result = prevValue + current; break;
-      case '−': result = prevValue - current; break;
-      case '×': result = prevValue * current; break;
-      case '÷': result = current !== 0 ? prevValue / current : 'Greška'; break;
-      default: return;
-    }
-    if (!silent) history = prevValue + ' ' + operator + ' ' + current + ' =';
-    display = typeof result === 'number' ? formatNum(result) : result;
-    operator = null; prevValue = null; waitingForOperand = true;
-    updateDisplay();
-  }
-
-  function formatNum(n) {
-    if (isNaN(n) || !isFinite(n)) return 'Greška';
-    // Avoid floating point noise
-    let s = parseFloat(n.toPrecision(12)).toString();
-    return s;
-  }
-
-  // ── Scientific functions ──
-  function toRad(v) { return angleMode === 'deg' ? v * Math.PI / 180 : v; }
-
-  function sciFunc(fn) {
-    const v = parseFloat(display);
-    let result;
-    switch(fn) {
-      case 'sin':  result = Math.sin(toRad(v)); history = 'sin(' + display + ')'; break;
-      case 'cos':  result = Math.cos(toRad(v)); history = 'cos(' + display + ')'; break;
-      case 'tan':  result = Math.tan(toRad(v)); history = 'tan(' + display + ')'; break;
-      case 'log':  result = Math.log10(v);      history = 'log(' + display + ')'; break;
-      case 'ln':   result = Math.log(v);        history = 'ln(' + display + ')';  break;
-      case 'sqrt': result = Math.sqrt(v);       history = '√(' + display + ')';   break;
-      case 'sq':   result = v * v;              history = display + '²';          break;
-      case 'inv':  result = 1 / v;              history = '1/(' + display + ')';  break;
-      case 'fact': result = factorial(v);        history = display + '!';          break;
-      case 'pi':   display = String(Math.PI);   history = 'π'; updateDisplay(); return;
-      case 'e':    display = String(Math.E);    history = 'e'; updateDisplay();  return;
-      case 'pow':
-        prevValue = v;
-        sciPending = 'pow';
-        history = display + ' ^ ';
-        operator = '^';
-        waitingForOperand = true;
-        updateDisplay();
-        return;
-    }
-    display = formatNum(result);
-    waitingForOperand = true;
-    updateDisplay();
-  }
-
-  function factorial(n) {
-    n = Math.round(n);
-    if (n < 0) return NaN;
-    if (n === 0 || n === 1) return 1;
-    if (n > 170) return Infinity;
-    let r = 1;
-    for (let i = 2; i <= n; i++) r *= i;
-    return r;
-  }
-
-  // ── Mode & Angle ──
-  function setMode(mode) {
-    document.getElementById('btnStd').classList.toggle('active', mode === 'standard');
-    document.getElementById('btnSci').classList.toggle('active', mode === 'scientific');
-    const sci = document.getElementById('sciPanel');
-    sci.classList.toggle('visible', mode === 'scientific');
-  }
-
-  function setAngle(a) {
-    angleMode = a;
-    document.getElementById('btnDeg').classList.toggle('active', a === 'deg');
-    document.getElementById('btnRad').classList.toggle('active', a === 'rad');
-  }
-
-  // Keyboard support
-  document.addEventListener('keydown', e => {
-    if ('0123456789'.includes(e.key)) appendNum(e.key);
-    else if (e.key === '.') appendDot();
-    else if (e.key === '+') setOp('+');
-    else if (e.key === '-') setOp('−');
-    else if (e.key === '*') setOp('×');
-    else if (e.key === '/') { e.preventDefault(); setOp('÷'); }
-    else if (e.key === 'Enter' || e.key === '=') calcEquals();
-    else if (e.key === 'Escape') calcClear();
-    else if (e.key === 'Backspace') {
-      if (display.length > 1) display = display.slice(0, -1);
-      else display = '0';
-      updateDisplay();
-    }
+  // Označi aktivni jezik u dropdownu
+  document.querySelectorAll('.lang-option').forEach(el => {
+    el.classList.toggle('selected', el.dataset.lang === lang);
   });
+}
 
+function buildLangMenu() {
+  const dd = document.getElementById('langDropdown');
+  dd.innerHTML = '';
+  Object.entries(LANGS).forEach(([key, t]) => {
+    const btn = document.createElement('button');
+    btn.className = 'lang-option' + (key === currentLang ? ' selected' : '');
+    btn.dataset.lang = key;
+    btn.innerHTML = `<span class="flag">${t.flag}</span>${t.name}`;
+    btn.onclick = () => { applyLang(key); closeLangMenu(); };
+    dd.appendChild(btn);
+  });
+}
+
+function toggleLangMenu() {
+  document.getElementById('langDropdown').classList.toggle('open');
+}
+function closeLangMenu() {
+  document.getElementById('langDropdown').classList.remove('open');
+}
+document.addEventListener('click', e => {
+  if (!e.target.closest('.lang-wrap')) closeLangMenu();
+});
+
+// ═══════════════════════════════════════════════
+// Kalkulator
+// ═══════════════════════════════════════════════
+let display = '0';
+let history = '';
+let operator = null;
+let prevValue = null;
+let waitingForOperand = false;
+let angleMode = 'deg';
+let sciPending = null;
+
+const mainEl = document.getElementById('mainDisplay');
+const histEl = document.getElementById('history');
+
+function updateDisplay() {
+  mainEl.textContent = display;
+  histEl.textContent = history;
+  mainEl.classList.remove('shrink', 'tiny');
+  if (display.length > 12) mainEl.classList.add('tiny');
+  else if (display.length > 8) mainEl.classList.add('shrink');
+}
+
+function appendNum(n) {
+  if (waitingForOperand) { display = n; waitingForOperand = false; }
+  else display = display === '0' ? n : display + n;
   updateDisplay();
+}
 
-  // Registracija Service Workera
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/service-worker.js')
-        .catch(err => console.warn('SW registration failed:', err));
-    });
+function appendDot() {
+  if (waitingForOperand) { display = '0.'; waitingForOperand = false; }
+  else if (!display.includes('.')) display += '.';
+  updateDisplay();
+}
+
+function calcClear() {
+  display = '0'; history = ''; operator = null;
+  prevValue = null; waitingForOperand = false; sciPending = null;
+  updateDisplay();
+}
+
+function toggleSign() {
+  display = display.startsWith('-') ? display.slice(1) : '-' + display;
+  if (display === '-0') display = '0';
+  updateDisplay();
+}
+
+function calcPercent() {
+  display = String(parseFloat(display) / 100);
+  updateDisplay();
+}
+
+function setOp(op) {
+  if (sciPending === 'pow') {
+    const base = prevValue !== null ? prevValue : parseFloat(display);
+    display = formatNum(Math.pow(base, parseFloat(display)));
+    prevValue = null; sciPending = null; history = ''; waitingForOperand = true;
+    updateDisplay(); return;
   }
+  if (operator && !waitingForOperand) calcEquals(true);
+  prevValue = parseFloat(display);
+  operator = op;
+  history = display + ' ' + op;
+  waitingForOperand = true;
+  updateDisplay();
+}
+
+function calcEquals(silent = false) {
+  if (operator === null || prevValue === null) return;
+  const current = parseFloat(display);
+  let result;
+  switch (operator) {
+    case '+': result = prevValue + current; break;
+    case '−': result = prevValue - current; break;
+    case '×': result = prevValue * current; break;
+    case '÷': result = current !== 0 ? prevValue / current : LANGS[currentLang].error; break;
+    default: return;
+  }
+  if (!silent) history = prevValue + ' ' + operator + ' ' + current + ' =';
+  display = typeof result === 'number' ? formatNum(result) : result;
+  operator = null; prevValue = null; waitingForOperand = true;
+  updateDisplay();
+}
+
+function formatNum(n) {
+  if (isNaN(n) || !isFinite(n)) return LANGS[currentLang].error;
+  return parseFloat(n.toPrecision(12)).toString();
+}
+
+function toRad(v) { return angleMode === 'deg' ? v * Math.PI / 180 : v; }
+
+function sciFunc(fn) {
+  const v = parseFloat(display);
+  let result;
+  switch(fn) {
+    case 'sin':  result = Math.sin(toRad(v)); history = 'sin(' + display + ')'; break;
+    case 'cos':  result = Math.cos(toRad(v)); history = 'cos(' + display + ')'; break;
+    case 'tan':  result = Math.tan(toRad(v)); history = 'tan(' + display + ')'; break;
+    case 'log':  result = Math.log10(v);      history = 'log(' + display + ')'; break;
+    case 'ln':   result = Math.log(v);        history = 'ln('  + display + ')'; break;
+    case 'sqrt': result = Math.sqrt(v);       history = '√('   + display + ')'; break;
+    case 'sq':   result = v * v;              history = display + '²';          break;
+    case 'inv':  result = 1 / v;              history = '1/('  + display + ')'; break;
+    case 'fact': result = factorial(v);        history = display + '!';          break;
+    case 'pi':   display = String(Math.PI);   history = 'π';   updateDisplay(); return;
+    case 'e':    display = String(Math.E);    history = 'e';   updateDisplay(); return;
+    case 'pow':
+      prevValue = v; sciPending = 'pow';
+      history = display + ' ^ '; operator = '^'; waitingForOperand = true;
+      updateDisplay(); return;
+  }
+  display = formatNum(result);
+  waitingForOperand = true;
+  updateDisplay();
+}
+
+function factorial(n) {
+  n = Math.round(n);
+  if (n < 0) return NaN;
+  if (n <= 1) return 1;
+  if (n > 170) return Infinity;
+  let r = 1;
+  for (let i = 2; i <= n; i++) r *= i;
+  return r;
+}
+
+function setMode(mode) {
+  document.getElementById('btnStd').classList.toggle('active', mode === 'standard');
+  document.getElementById('btnSci').classList.toggle('active', mode === 'scientific');
+  document.getElementById('sciPanel').classList.toggle('visible', mode === 'scientific');
+}
+
+function setAngle(a) {
+  angleMode = a;
+  document.getElementById('btnDeg').classList.toggle('active', a === 'deg');
+  document.getElementById('btnRad').classList.toggle('active', a === 'rad');
+}
+
+document.addEventListener('keydown', e => {
+  if ('0123456789'.includes(e.key)) appendNum(e.key);
+  else if (e.key === '.') appendDot();
+  else if (e.key === '+') setOp('+');
+  else if (e.key === '-') setOp('−');
+  else if (e.key === '*') setOp('×');
+  else if (e.key === '/') { e.preventDefault(); setOp('÷'); }
+  else if (e.key === 'Enter' || e.key === '=') calcEquals();
+  else if (e.key === 'Escape') calcClear();
+  else if (e.key === 'Backspace') {
+    if (display.length > 1) display = display.slice(0, -1);
+    else display = '0';
+    updateDisplay();
+  }
+});
+
+// ── Init ──
+buildLangMenu();
+applyLang(currentLang);
+updateDisplay();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .catch(err => console.warn('SW registration failed:', err));
+  });
+}
 </script>
 </body>
 </html>
